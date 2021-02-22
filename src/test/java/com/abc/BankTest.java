@@ -6,6 +6,7 @@ import org.junit.Test;
 import java.math.BigDecimal;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class BankTest {
     private static final double DOUBLE_DELTA = 1e-15;
@@ -50,10 +51,11 @@ public class BankTest {
     public void maxi_savings_account() {
         Account account = new Account(AccountType.MAXI_SAVINGS);
         bank.addCustomer(new Customer("Bill").openAccount(account));
-        
+    
         account.deposit(3000.0);
-        
-        assertEquals(170.0, bank.totalInterestPaid(), DOUBLE_DELTA);
+    
+        double expected = 3000 * 0.05;
+        assertEquals(expected, bank.totalInterestPaid(), DOUBLE_DELTA);
     }
     
     @Test
@@ -85,6 +87,7 @@ public class BankTest {
         //when
         try {
             bank.transfer(from, to, 100);
+            fail("Should throw exception");
         } catch (Exception e) {
             assertEquals(IllegalArgumentException.class, e.getClass());
         }

@@ -29,4 +29,9 @@ public class Transaction {
         this.amount = amount;
         this.transactionDate = DateProvider.getInstance().now();
     }
+    
+    protected Transaction(double amount, LocalDateTime date) {
+        this.amount = BigDecimal.valueOf(amount);
+        this.transactionDate = date;
+    }
 }

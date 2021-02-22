@@ -1,6 +1,7 @@
 package com.abc;
 
 import java.math.BigDecimal;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +19,7 @@ public class Account {
     }
     
     public void deposit(BigDecimal amount) {
-        if (BigDecimal.ZERO.compareTo(amount) > 0) {
+        if (BigDecimal.ZERO.compareTo(amount) >= 0) {
             throw new IllegalArgumentException("Amount must be greater than zero");
         } else {
             transactions.add(new Transaction(amount));
@@ -30,7 +31,7 @@ public class Account {
     }
     
     public void withdraw(BigDecimal amount) {
-        if (BigDecimal.ZERO.compareTo(amount) > 0) {
+        if (BigDecimal.ZERO.compareTo(amount) >= 0) {
             throw new IllegalArgumentException("Amount must be greater than zero");
         } else if (sumTransactions().compareTo(amount) < 0) {
             //TODO allow overdraft?
@@ -52,18 +53,23 @@ public class Account {
                     return /*1000x0.001*/ 1 + (amount - 1000) * 0.002;
                 }
             case MAXI_SAVINGS:
-                if (amount <= 1000) {
-                    return amount * 0.02;
-                } else if (amount <= 2000) {
-                    return /*1000 x 0.02*/ 20 + (amount - 1000) * 0.05;
-                } else {
-                    return /*(1000x0.02)+((2000-1000)x0.05)=20+50*/ 70 + (amount - 2000) * 0.1;
+                for (Transaction transaction : transactions) {
+                    if (isWithinTenDays(transaction) && "withdrawal".equalsIgnoreCase(transaction.getType())) {
+                        return amount * 0.001;
+                    }
                 }
+                return amount * 0.05;
             case CHECKING:
                 return 0 + amount * 0.001;
             default:
                 throw new IllegalStateException("Unexpected value: " + accountType);
         }
+    }
+    
+    private boolean isWithinTenDays(Transaction transaction) {
+        return transaction.getTransactionDate()
+                .isAfter(DateProvider.getInstance().now()
+                        .minus(10, ChronoUnit.DAYS));
     }
     
     public BigDecimal sumTransactions() {
