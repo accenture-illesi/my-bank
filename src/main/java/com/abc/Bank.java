@@ -7,7 +7,7 @@ public class Bank {
     private final List<Customer> customers;
     
     public Bank() {
-        customers = new ArrayList<Customer>();
+        customers = new ArrayList<>();
     }
     
     public void addCustomer(Customer customer) {

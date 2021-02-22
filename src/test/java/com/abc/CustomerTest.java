@@ -1,6 +1,5 @@
 package com.abc;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -8,7 +7,6 @@ import static org.junit.Assert.assertEquals;
 public class CustomerTest {
     
     @Test //Test customer statement generation
-    @Ignore //TODO ignored until localization is fixed
     public void testApp() {
     
         Account checkingAccount = new Account(AccountType.CHECKING);
@@ -48,12 +46,12 @@ public class CustomerTest {
         assertEquals(2, oscar.getNumberOfAccounts());
     }
     
-    @Test //TODO add 3rd account
-    @Ignore
+    @Test
     public void testThreeAccounts() {
         Customer oscar = new Customer("Oscar")
-                .openAccount(new Account(AccountType.SAVINGS));
-        oscar.openAccount(new Account(AccountType.CHECKING));
+                .openAccount(new Account(AccountType.SAVINGS))
+                .openAccount(new Account(AccountType.CHECKING))
+                .openAccount(new Account(AccountType.CHECKING));
         assertEquals(3, oscar.getNumberOfAccounts());
     }
 }

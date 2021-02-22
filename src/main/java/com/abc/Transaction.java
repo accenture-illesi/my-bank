@@ -1,23 +1,23 @@
 package com.abc;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public class Transaction {
     private final BigDecimal amount;
     
-    private final Date transactionDate;
+    private final LocalDateTime transactionDate;
     
     public BigDecimal getAmount() {
         return amount;
     }
     
-    public double getAmountAsDouble() {
-        return amount.doubleValue();
+    public LocalDateTime getTransactionDate() {
+        return transactionDate;
     }
     
-    public Date getTransactionDate() {
-        return transactionDate;
+    public String getType() {
+        return BigDecimal.ZERO.compareTo(amount) > 0 ? "withdrawal" : "deposit";
     }
     
     public Transaction(double amount) {

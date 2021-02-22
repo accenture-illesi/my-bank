@@ -1,7 +1,6 @@
 package com.abc;
 
-import java.util.Calendar;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public class DateProvider {
     private static class SingletonHolder {
@@ -12,7 +11,7 @@ public class DateProvider {
         return SingletonHolder.instance;
     }
     
-    public Date now() { // TODO replace Date with LocalDateTime
-        return Calendar.getInstance().getTime();
+    public LocalDateTime now() {
+        return LocalDateTime.now();
     }
 }

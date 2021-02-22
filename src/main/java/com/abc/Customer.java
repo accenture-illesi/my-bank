@@ -1,17 +1,20 @@
 package com.abc;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
-
-import static java.lang.Math.abs;
+import java.util.Locale;
 
 public class Customer {
-    private String name;
-    private List<Account> accounts;
+    private static final DecimalFormat FORMAT = new DecimalFormat("¤#,##0.00", DecimalFormatSymbols.getInstance(Locale.US));
+    private final String name;
+    private final List<Account> accounts;
     
     public Customer(String name) {
         this.name = name;
-        this.accounts = new ArrayList<Account>();
+        this.accounts = new ArrayList<>();
     }
     
     public String getName() {
@@ -36,30 +39,30 @@ public class Customer {
     }
     
     public String getStatement() {
-        String statement = "Statement for " + name + "\n";
-        double total = 0.0;
+        StringBuilder statement = new StringBuilder("Statement for ").append(name).append("\n");
+        BigDecimal total = BigDecimal.ZERO;
         for (Account account : accounts) {
-            statement += "\n" + statementForAccount(account) + "\n";
-            total += account.sumTransactions();
+            statement.append("\n").append(statementForAccount(account)).append("\n");
+            total = total.add(account.sumTransactions());
         }
-        statement += "\nTotal In All Accounts " + toDollars(total);
-        return statement;
+        statement.append("\n").append("Total In All Accounts ").append(toAbsDollars(total));
+        return statement.toString();
     }
     
     private String statementForAccount(Account account) {
-        String statement = account.getAccountType().toString() + "\n";
-        
-        //Now total up all the transactions
-        double total = 0.0;
+        StringBuilder statement = new StringBuilder(account.getAccountType().toString()).append("\n");
+        BigDecimal total = BigDecimal.ZERO;
         for (Transaction transaction : account.getTransactions()) {
-            statement += "  " + (transaction.getAmountAsDouble() < 0 ? "withdrawal" : "deposit") + " " + toDollars(transaction.getAmountAsDouble()) + "\n";
-            total += transaction.getAmountAsDouble();
+            statement.append("  ").append(transaction.getType())
+                    .append(" ").append(toAbsDollars(transaction.getAmount()))
+                    .append("\n");
+            total = total.add(transaction.getAmount());
         }
-        statement += "Total " + toDollars(total);
-        return statement;
+        statement.append("Total ").append(toAbsDollars(total));
+        return statement.toString();
     }
     
-    private String toDollars(double d) {
-        return String.format("$%,.2f", abs(d));
+    private String toAbsDollars(BigDecimal amount) {
+        return FORMAT.format(amount.abs());
     }
 }

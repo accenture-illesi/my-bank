@@ -1,15 +1,21 @@
 package com.abc;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
 public class BankTest {
     private static final double DOUBLE_DELTA = 1e-15;
+    private Bank bank;
+    
+    @Before
+    public void init() {
+        bank = new Bank();
+    }
     
     @Test
     public void customerSummary() {
-        Bank bank = new Bank();
         Customer john = new Customer("John");
         john.openAccount(new Account(AccountType.CHECKING));
         bank.addCustomer(john);
@@ -19,7 +25,6 @@ public class BankTest {
     
     @Test
     public void checkingAccount() {
-        Bank bank = new Bank();
         Account checkingAccount = new Account(AccountType.CHECKING);
         Customer bill = new Customer("Bill").openAccount(checkingAccount);
         bank.addCustomer(bill);
@@ -31,7 +36,6 @@ public class BankTest {
     
     @Test
     public void savings_account() {
-        Bank bank = new Bank();
         Account checkingAccount = new Account(AccountType.SAVINGS);
         bank.addCustomer(new Customer("Bill").openAccount(checkingAccount));
         
