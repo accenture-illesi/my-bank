@@ -4,16 +4,15 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class DateProvider {
-    private static DateProvider instance = null;
-    
-    public static DateProvider getInstance() {
-        if (instance == null) {
-            instance = new DateProvider();
-        }
-        return instance;
+    private static class SingletonHolder {
+        private static final DateProvider instance = new DateProvider();
     }
     
-    public Date now() {
+    public static DateProvider getInstance() {
+        return SingletonHolder.instance;
+    }
+    
+    public Date now() { // TODO replace Date with LocalDateTime
         return Calendar.getInstance().getTime();
     }
 }

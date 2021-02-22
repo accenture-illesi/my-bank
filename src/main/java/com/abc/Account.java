@@ -1,5 +1,6 @@
 package com.abc;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +22,7 @@ public class Account {
     }
     
     public void withdraw(double amount) {
+        //TODO check for negative balance?
         if (amount <= 0) {
             throw new IllegalArgumentException("amount must be greater than zero");
         } else {
@@ -30,6 +32,7 @@ public class Account {
     
     public double interestEarned() {
         double amount = sumTransactions();
+        //TODO move logic into AccountType
         switch (accountType) {
             case SAVINGS:
                 if (amount <= 1000) {
@@ -55,15 +58,12 @@ public class Account {
     }
     
     public double sumTransactions() {
-        return checkIfTransactionsExist(true);
-    }
-    
-    private double checkIfTransactionsExist(boolean checkAll) {
-        double amount = 0.0;
-        for (Transaction t : transactions) {
-            amount += t.amount;
+        //TODO eager summing (new field)?
+        BigDecimal amount = BigDecimal.ZERO;
+        for (Transaction transaction : transactions) {
+            amount = amount.add(transaction.getAmount());
         }
-        return amount;
+        return amount.doubleValue(); // TODO keep as BigDecimal
     }
     
     public AccountType getAccountType() {
