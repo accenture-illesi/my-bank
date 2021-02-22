@@ -4,17 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Account {
+    private final AccountType accountType;
+    private final List<Transaction> transactions;
     
-    public static final int CHECKING = 0;
-    public static final int SAVINGS = 1;
-    public static final int MAXI_SAVINGS = 2;
-    
-    private final int accountType;
-    public List<Transaction> transactions;
-    
-    public Account(int accountType) {
+    public Account(AccountType accountType) {
         this.accountType = accountType;
-        this.transactions = new ArrayList<Transaction>();
+        this.transactions = new ArrayList<>();
     }
     
     public void deposit(double amount) {
@@ -42,6 +37,7 @@ public class Account {
                 } else {
                     return 1 + (amount - 1000) * 0.002;
                 }
+                //TODO add super-savings account
 //            case SUPER_SAVINGS:
 //                if (amount <= 4000)
 //                    return 20;
@@ -70,7 +66,11 @@ public class Account {
         return amount;
     }
     
-    public int getAccountType() {
+    public AccountType getAccountType() {
         return accountType;
+    }
+    
+    public List<Transaction> getTransactions() {
+        return transactions;
     }
 }
