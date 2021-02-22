@@ -49,13 +49,16 @@ public class Bank {
         }
     }
     
-    //TODO update error handling or safe delete
-    public String getFirstCustomer() {
-        try {
-            return customers.get(0).getName();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "Error";
+    public void accrueInterest() {
+        for (Customer customer : customers) {
+            for (Account account : customer.getAccounts()) {
+                double compoundInterest = account.interestEarned() / DateProvider.getInstance().now().toLocalDate().lengthOfYear();
+                account.deposit(compoundInterest);
+            }
         }
+    }
+    
+    public List<Customer> getCustomers() {
+        return customers;
     }
 }

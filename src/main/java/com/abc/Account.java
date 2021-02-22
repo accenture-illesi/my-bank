@@ -14,23 +14,24 @@ public class Account {
         this.transactions = new ArrayList<>();
     }
     
-    public void deposit(double amount) {
-        deposit(BigDecimal.valueOf(amount));
+    public Account deposit(double amount) {
+        return deposit(BigDecimal.valueOf(amount));
     }
     
-    public void deposit(BigDecimal amount) {
+    public Account deposit(BigDecimal amount) {
         if (BigDecimal.ZERO.compareTo(amount) >= 0) {
             throw new IllegalArgumentException("Amount must be greater than zero");
         } else {
             transactions.add(new Transaction(amount));
         }
+        return this;
     }
     
-    public void withdraw(double amount) {
-        withdraw(BigDecimal.valueOf(amount));
+    public Account withdraw(double amount) {
+        return withdraw(BigDecimal.valueOf(amount));
     }
     
-    public void withdraw(BigDecimal amount) {
+    public Account withdraw(BigDecimal amount) {
         if (BigDecimal.ZERO.compareTo(amount) >= 0) {
             throw new IllegalArgumentException("Amount must be greater than zero");
         } else if (sumTransactions().compareTo(amount) < 0) {
@@ -39,6 +40,7 @@ public class Account {
         } else {
             transactions.add(new Transaction(amount.negate()));
         }
+        return this;
     }
     
     public double interestEarned() {

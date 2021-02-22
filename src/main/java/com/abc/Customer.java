@@ -65,4 +65,8 @@ public class Customer {
     private String toAbsDollars(BigDecimal amount) {
         return FORMAT.format(amount.abs());
     }
+    
+    public List<Account> getAccounts() {
+        return accounts;
+    }
 }
