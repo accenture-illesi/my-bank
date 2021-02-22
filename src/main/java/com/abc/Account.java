@@ -14,7 +14,11 @@ public class Account {
     }
     
     public void deposit(double amount) {
-        if (amount <= 0) {
+        deposit(BigDecimal.valueOf(amount));
+    }
+    
+    public void deposit(BigDecimal amount) {
+        if (BigDecimal.ZERO.compareTo(amount) > 0) {
             throw new IllegalArgumentException("Amount must be greater than zero");
         } else {
             transactions.add(new Transaction(amount));
@@ -22,11 +26,17 @@ public class Account {
     }
     
     public void withdraw(double amount) {
-        //TODO check for negative balance?
-        if (amount <= 0) {
+        withdraw(BigDecimal.valueOf(amount));
+    }
+    
+    public void withdraw(BigDecimal amount) {
+        if (BigDecimal.ZERO.compareTo(amount) > 0) {
             throw new IllegalArgumentException("Amount must be greater than zero");
+        } else if (sumTransactions().compareTo(amount) < 0) {
+            //TODO allow overdraft?
+            throw new IllegalArgumentException("Account does not have enough balance");
         } else {
-            transactions.add(new Transaction(-amount));
+            transactions.add(new Transaction(amount.negate()));
         }
     }
     

@@ -1,5 +1,6 @@
 package com.abc;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +33,20 @@ public class Bank {
             total += customer.totalInterestEarned();
         }
         return total;
+    }
+    
+    public void transfer(Account from, Account to, double amount) {
+        transfer(from, to, BigDecimal.valueOf(amount));
+    }
+    
+    public void transfer(Account from, Account to, BigDecimal amount) {
+        // TODO check permissions (authentication & authorization)
+        try {
+            from.withdraw(amount);
+            to.deposit(amount);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Failed to transfer between accounts", e);
+        }
     }
     
     //TODO update error handling or safe delete
