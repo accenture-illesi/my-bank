@@ -17,13 +17,12 @@ public class Transaction {
         return transactionDate;
     }
     
-    public String getType() {
-        return BigDecimal.ZERO.compareTo(amount) > 0 ? "withdrawal" : "deposit";
+    public TransactionType getType() {
+        return BigDecimal.ZERO.compareTo(amount) > 0 ? TransactionType.WITHDRAWAL : TransactionType.DEPOSIT;
     }
     
     public Transaction(double amount) {
-        this.amount = BigDecimal.valueOf(amount);
-        this.transactionDate = DateProvider.getInstance().now();
+        this(BigDecimal.valueOf(amount));
     }
     
     public Transaction(BigDecimal amount) {

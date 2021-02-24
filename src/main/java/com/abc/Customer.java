@@ -32,10 +32,10 @@ public class Customer {
         return accounts.size();
     }
     
-    public double totalInterestEarned() {
-        double total = 0;
+    public BigDecimal totalInterestEarned() {
+        BigDecimal total = BigDecimal.ZERO;
         for (Account account : accounts) {
-            total += account.interestEarned();
+            total = total.add(account.interestEarned());
         }
         return total;
     }

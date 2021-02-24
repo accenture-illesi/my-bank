@@ -25,7 +25,7 @@ public class AccountTest {
         account = new Account(AccountType.CHECKING);
         account.deposit(3000.0);
         //when
-        double actual = account.interestEarned();
+        double actual = account.interestEarned().doubleValue();
         //then
         double expected = 3000 * 0.001;
         assertEquals(expected, actual, DOUBLE_DELTA);
@@ -37,7 +37,7 @@ public class AccountTest {
         account = new Account(AccountType.SAVINGS);
         account.deposit(3000.0);
         //when
-        double actual = account.interestEarned();
+        double actual = account.interestEarned().doubleValue();
         //then
         double expected = 1000 * 0.001 + 2000 * 0.002;
         assertEquals(expected, actual, DOUBLE_DELTA);
@@ -49,7 +49,7 @@ public class AccountTest {
         account = new Account(AccountType.MAXI_SAVINGS);
         account.deposit(3000.0);
         //when
-        double actual = account.interestEarned();
+        double actual = account.interestEarned().doubleValue();
         //then
         double expected = 3000 * 0.05;
         assertEquals(expected, actual, DOUBLE_DELTA);
@@ -64,7 +64,7 @@ public class AccountTest {
                 .minus(10, ChronoUnit.DAYS)
                 .minus(1, ChronoUnit.MINUTES)));
         //when
-        double actual = account.interestEarned();
+        double actual = account.interestEarned().doubleValue();
         //then
         double expected = 2000 * 0.05;
         assertEquals(expected, actual, DOUBLE_DELTA);
@@ -77,7 +77,7 @@ public class AccountTest {
         account.deposit(3000.0);
         account.withdraw(1000);
         //when
-        double actual = account.interestEarned();
+        double actual = account.interestEarned().doubleValue();
         //then
         double expected = 2000 * 0.001;
         assertEquals(expected, actual, DOUBLE_DELTA);

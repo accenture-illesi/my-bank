@@ -5,15 +5,23 @@ import com.abc.interest.WithdrawalTimingInterest;
 import com.abc.transaction.Transaction;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Account {
-    public static final ProgressiveInterest CHECKING_INTEREST = new ProgressiveInterest(0.001);
-    public static final ProgressiveInterest SAVINGS_INTEREST = new ProgressiveInterest(0.001).next(1000, 0.002);
-    public static final WithdrawalTimingInterest MAXI_SAVINGS_INTEREST = new WithdrawalTimingInterest(10, 0.001, 0.05);
+    private static final ProgressiveInterest CHECKING_INTEREST = new ProgressiveInterest(0.001);
+    private static final ProgressiveInterest SAVINGS_INTEREST = new ProgressiveInterest(0.001).next(1000, 0.002);
+    private static final WithdrawalTimingInterest MAXI_SAVINGS_INTEREST = new WithdrawalTimingInterest(10, 0.001, 0.05);
+    private static final int DAYS_IN_YEAR = LocalDate.now().lengthOfYear();
+    private static final ProgressiveInterest DAILY_CHECKING_INTEREST = new ProgressiveInterest(0.001 / DAYS_IN_YEAR);
+    private static final ProgressiveInterest DAILY_SAVINGS_INTEREST = new ProgressiveInterest(0.001 / DAYS_IN_YEAR).next(1000, 0.002 / DAYS_IN_YEAR);
+    private static final WithdrawalTimingInterest DAILY_MAXI_SAVINGS_INTEREST = new WithdrawalTimingInterest(10, 0.001 / DAYS_IN_YEAR, 0.05 / DAYS_IN_YEAR);
+    
     private final AccountType accountType;
     private final List<Transaction> transactions;
+    
+    private BigDecimal sum;
     
     public Account(AccountType accountType) {
         this.accountType = accountType;
@@ -29,8 +37,9 @@ public class Account {
             throw new IllegalArgumentException("Amount must be greater than zero");
         } else {
             transactions.add(new Transaction(amount));
+            sum = null;
+            return this;
         }
-        return this;
     }
     
     public Account withdraw(double amount) {
@@ -45,32 +54,37 @@ public class Account {
             throw new IllegalArgumentException("Account does not have enough balance");
         } else {
             transactions.add(new Transaction(amount.negate()));
+            sum = null;
+            return this;
         }
-        return this;
     }
     
-    public double interestEarned() {
-        //TODO use BigDecimal
-        double amount = sumTransactions().doubleValue();
-        switch (accountType) {
-            case CHECKING:
-                return CHECKING_INTEREST.calculate(amount);
-            case SAVINGS:
-                return SAVINGS_INTEREST.calculate(amount);
-            case MAXI_SAVINGS:
-                return MAXI_SAVINGS_INTEREST.calculate(amount, transactions);
-            default:
-                throw new IllegalStateException("Unexpected value: " + accountType);
-        }
+    public BigDecimal dailyInterestEarned() {
+        BigDecimal amount = sumTransactions();
+        return switch (accountType) {
+            case CHECKING -> DAILY_CHECKING_INTEREST.calculate(amount);
+            case SAVINGS -> DAILY_SAVINGS_INTEREST.calculate(amount);
+            case MAXI_SAVINGS -> DAILY_MAXI_SAVINGS_INTEREST.calculate(amount, transactions);
+        };
+    }
+    
+    public BigDecimal interestEarned() {
+        BigDecimal amount = sumTransactions();
+        return switch (accountType) {
+            case CHECKING -> CHECKING_INTEREST.calculate(amount);
+            case SAVINGS -> SAVINGS_INTEREST.calculate(amount);
+            case MAXI_SAVINGS -> MAXI_SAVINGS_INTEREST.calculate(amount, transactions);
+        };
     }
     
     public BigDecimal sumTransactions() {
-        //TODO eager summing (new field)?
-        BigDecimal amount = BigDecimal.ZERO;
-        for (Transaction transaction : transactions) {
-            amount = amount.add(transaction.getAmount());
+        if (sum == null) {
+            sum = BigDecimal.ZERO;
+            for (Transaction transaction : transactions) {
+                sum = sum.add(transaction.getAmount());
+            }
         }
-        return amount;
+        return sum;
     }
     
     public AccountType getAccountType() {

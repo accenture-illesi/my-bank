@@ -10,8 +10,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 public class BankTest {
-    //TODO improve accuracy of calculations
-    private static final double DOUBLE_DELTA = 1e-10;
+    private static final double DOUBLE_DELTA = 1e-15;
+    /**
+     * A slightly less strict delta, to compare numbers after multiple iterations of calculations.
+     *
+     * @implNote {@link BigDecimal} is used for the actual calculations, but only double for the tests.
+     */
+    private static final double LOWER_DELTA = 1e-11;
     private Bank underTest;
     
     @Before
@@ -35,29 +40,29 @@ public class BankTest {
         underTest.addCustomer(bill);
         
         checkingAccount.deposit(100.0);
-    
-        assertEquals(0.1, underTest.totalInterestPaid(), DOUBLE_DELTA);
+        
+        assertEquals(0.1, underTest.totalInterestPaid().doubleValue(), DOUBLE_DELTA);
     }
     
     @Test
     public void savings_account() {
         Account account = new Account(AccountType.SAVINGS);
         underTest.addCustomer(new Customer("Bill").openAccount(account));
-    
+        
         account.deposit(1500.0);
-    
-        assertEquals(2.0, underTest.totalInterestPaid(), DOUBLE_DELTA);
+        
+        assertEquals(2.0, underTest.totalInterestPaid().doubleValue(), DOUBLE_DELTA);
     }
     
     @Test
     public void maxi_savings_account() {
         Account account = new Account(AccountType.MAXI_SAVINGS);
         underTest.addCustomer(new Customer("Bill").openAccount(account));
-    
+        
         account.deposit(3000.0);
-    
+        
         double expected = 3000 * 0.05;
-        assertEquals(expected, underTest.totalInterestPaid(), DOUBLE_DELTA);
+        assertEquals(expected, underTest.totalInterestPaid().doubleValue(), DOUBLE_DELTA);
     }
     
     @Test
@@ -93,6 +98,7 @@ public class BankTest {
         } catch (Exception e) {
             assertEquals(IllegalArgumentException.class, e.getClass());
         }
+        
         //then
         assertEquals(0, BigDecimal.valueOf(50).compareTo(from.sumTransactions()));
         assertEquals(0, BigDecimal.valueOf(50).compareTo(to.sumTransactions()));
@@ -109,7 +115,7 @@ public class BankTest {
             underTest.accrueInterest();
         }
         //then
-        double actual = actualBalance();
+        double actual = actualBalance().doubleValue();
         double expected = expectedBalance(days);
         assertEquals(expected, actual, DOUBLE_DELTA);
     }
@@ -117,16 +123,16 @@ public class BankTest {
     @Test
     public void accrueMultipleInterests() {
         //given
-        int days = 2;
+        int days = 100;
         completeAccounts();
         //when
         for (int i = 0; i < days; i++) {
             underTest.accrueInterest();
         }
         //then
-        double actual = actualBalance();
+        double actual = actualBalance().doubleValue();
         double expected = expectedBalance(days);
-        assertEquals(expected, actual, DOUBLE_DELTA);
+        assertEquals(expected, actual, LOWER_DELTA);
     }
     
     private void completeAccounts() {
@@ -137,11 +143,11 @@ public class BankTest {
                 .openAccount(new Account(AccountType.MAXI_SAVINGS).deposit(1000)));
     }
     
-    private double actualBalance() {
-        double actual = 0.0;
+    private BigDecimal actualBalance() {
+        BigDecimal actual = BigDecimal.ZERO;
         for (Customer customer : underTest.getCustomers()) {
             for (Account account : customer.getAccounts()) {
-                actual += account.sumTransactions().doubleValue();
+                actual = actual.add(account.sumTransactions());
             }
         }
         return actual;

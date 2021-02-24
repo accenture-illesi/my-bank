@@ -1,5 +1,7 @@
 package com.abc.interest;
 
+import java.math.BigDecimal;
+
 public class ProgressiveInterest {
     private Bracket brackets;
     
@@ -8,19 +10,19 @@ public class ProgressiveInterest {
     }
     
     public ProgressiveInterest next(double threshold, double rate) {
-        if (threshold <= brackets.threshold) {
+        if (threshold <= brackets.threshold.doubleValue()) {
             throw new IllegalArgumentException("Next threshold has to be larger than the previous");
         }
         brackets = new Bracket(threshold, rate, brackets);
         return this;
     }
     
-    public double calculate(double amount) {
-        double result = 0.0;
-        double remainder = amount;
+    public BigDecimal calculate(BigDecimal amount) {
+        BigDecimal result = BigDecimal.ZERO;
+        BigDecimal remainder = amount;
         for (Bracket bracket = brackets; bracket != null; bracket = bracket.previous) {
-            if (remainder > bracket.threshold) {
-                result = result + (remainder - bracket.threshold) * bracket.rate;
+            if (remainder.compareTo(bracket.threshold) > 0) {
+                result = result.add((remainder.subtract(bracket.threshold)).multiply(bracket.rate));
                 remainder = bracket.threshold;
             }
         }
@@ -28,25 +30,23 @@ public class ProgressiveInterest {
     }
     
     private static class Bracket {
-        final double threshold;
-        final double rate;
+        final BigDecimal threshold;
+        final BigDecimal rate;
         final Bracket previous;
         
         private Bracket(double threshold, double rate) {
-            this.threshold = threshold;
-            this.rate = rate;
-            previous = null;
+            this(threshold, rate, null);
         }
         
         private Bracket(double threshold, double rate, Bracket previous) {
-            this.threshold = threshold;
-            this.rate = rate;
+            this.threshold = BigDecimal.valueOf(threshold);
+            this.rate = BigDecimal.valueOf(rate);
             this.previous = previous;
         }
         
         @Override
         public String toString() {
-            return "limit:" + threshold + "], rate:" + rate * 100 + "%";
+            return "threshold:" + threshold + ", rate:" + rate + (previous == null ? "" : ("; " + previous));
         }
     }
 }

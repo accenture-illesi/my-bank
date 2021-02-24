@@ -27,10 +27,10 @@ public class Bank {
         return number + " " + (number == 1 ? word : word + "s");
     }
     
-    public double totalInterestPaid() {
-        double total = 0;
+    public BigDecimal totalInterestPaid() {
+        BigDecimal total = BigDecimal.ZERO;
         for (Customer customer : customers) {
-            total += customer.totalInterestEarned();
+            total = total.add(customer.totalInterestEarned());
         }
         return total;
     }
@@ -52,7 +52,7 @@ public class Bank {
     public void accrueInterest() {
         for (Customer customer : customers) {
             for (Account account : customer.getAccounts()) {
-                double compoundInterest = account.interestEarned() / DateProvider.getInstance().now().toLocalDate().lengthOfYear();
+                BigDecimal compoundInterest = account.dailyInterestEarned();
                 account.deposit(compoundInterest);
             }
         }

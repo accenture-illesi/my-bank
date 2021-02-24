@@ -2,28 +2,30 @@ package com.abc.interest;
 
 import com.abc.DateProvider;
 import com.abc.transaction.Transaction;
+import com.abc.transaction.TransactionType;
 
+import java.math.BigDecimal;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 public class WithdrawalTimingInterest {
     private final int days;
-    private final double rateWithin;
-    private final double rateOver;
+    private final BigDecimal rateWithin;
+    private final BigDecimal rateOver;
     
     public WithdrawalTimingInterest(int days, double rateWithin, double rateOver) {
         this.days = days;
-        this.rateWithin = rateWithin;
-        this.rateOver = rateOver;
+        this.rateWithin = BigDecimal.valueOf(rateWithin);
+        this.rateOver = BigDecimal.valueOf(rateOver);
     }
     
-    public double calculate(double amount, List<Transaction> transactions) {
+    public BigDecimal calculate(BigDecimal amount, List<Transaction> transactions) {
         for (Transaction transaction : transactions) {
-            if (isWithinDays(transaction) && "withdrawal".equalsIgnoreCase(transaction.getType())) {
-                return amount * rateWithin;
+            if (isWithinDays(transaction) && TransactionType.WITHDRAWAL == transaction.getType()) {
+                return amount.multiply(rateWithin);
             }
         }
-        return amount * rateOver;
+        return amount.multiply(rateOver);
     }
     
     private boolean isWithinDays(Transaction transaction) {
