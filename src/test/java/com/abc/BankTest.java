@@ -115,7 +115,7 @@ public class BankTest {
     }
     
     @Test
-    public void accrueMultipleInterest() {
+    public void accrueMultipleInterests() {
         //given
         int days = 2;
         completeAccounts();

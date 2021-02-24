@@ -1,11 +1,17 @@
 package com.abc;
 
+import com.abc.interest.ProgressiveInterest;
+import com.abc.interest.WithdrawalTimingInterest;
+import com.abc.transaction.Transaction;
+
 import java.math.BigDecimal;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Account {
+    public static final ProgressiveInterest CHECKING_INTEREST = new ProgressiveInterest(0.001);
+    public static final ProgressiveInterest SAVINGS_INTEREST = new ProgressiveInterest(0.001).next(1000, 0.002);
+    public static final WithdrawalTimingInterest MAXI_SAVINGS_INTEREST = new WithdrawalTimingInterest(10, 0.001, 0.05);
     private final AccountType accountType;
     private final List<Transaction> transactions;
     
@@ -46,32 +52,16 @@ public class Account {
     public double interestEarned() {
         //TODO use BigDecimal
         double amount = sumTransactions().doubleValue();
-        //TODO improve readability/maintainability (move logic into AccountType?) (utility class?)
         switch (accountType) {
-            case SAVINGS:
-                if (amount <= 1000) {
-                    return amount * 0.001;
-                } else {
-                    return /*1000x0.001*/ 1 + (amount - 1000) * 0.002;
-                }
-            case MAXI_SAVINGS:
-                for (Transaction transaction : transactions) {
-                    if (isWithinTenDays(transaction) && "withdrawal".equalsIgnoreCase(transaction.getType())) {
-                        return amount * 0.001;
-                    }
-                }
-                return amount * 0.05;
             case CHECKING:
-                return 0 + amount * 0.001;
+                return CHECKING_INTEREST.calculate(amount);
+            case SAVINGS:
+                return SAVINGS_INTEREST.calculate(amount);
+            case MAXI_SAVINGS:
+                return MAXI_SAVINGS_INTEREST.calculate(amount, transactions);
             default:
                 throw new IllegalStateException("Unexpected value: " + accountType);
         }
-    }
-    
-    private boolean isWithinTenDays(Transaction transaction) {
-        return transaction.getTransactionDate()
-                .isAfter(DateProvider.getInstance().now()
-                        .minus(10, ChronoUnit.DAYS));
     }
     
     public BigDecimal sumTransactions() {

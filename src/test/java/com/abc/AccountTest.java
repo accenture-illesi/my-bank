@@ -1,5 +1,6 @@
 package com.abc;
 
+import com.abc.transaction.MockTransaction;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -59,7 +60,7 @@ public class AccountTest {
         //given
         account = new Account(AccountType.MAXI_SAVINGS);
         account.deposit(3000.0);
-        account.getTransactions().add(new Transaction(-1000, LocalDateTime.now()
+        account.getTransactions().add(new MockTransaction(-1000, LocalDateTime.now()
                 .minus(10, ChronoUnit.DAYS)
                 .minus(1, ChronoUnit.MINUTES)));
         //when

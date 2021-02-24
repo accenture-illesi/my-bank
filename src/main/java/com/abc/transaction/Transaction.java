@@ -1,11 +1,12 @@
-package com.abc;
+package com.abc.transaction;
+
+import com.abc.DateProvider;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class Transaction {
     private final BigDecimal amount;
-    
     private final LocalDateTime transactionDate;
     
     public BigDecimal getAmount() {
@@ -28,10 +29,5 @@ public class Transaction {
     public Transaction(BigDecimal amount) {
         this.amount = amount;
         this.transactionDate = DateProvider.getInstance().now();
-    }
-    
-    protected Transaction(double amount, LocalDateTime date) {
-        this.amount = BigDecimal.valueOf(amount);
-        this.transactionDate = date;
     }
 }
