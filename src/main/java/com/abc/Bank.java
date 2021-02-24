@@ -1,10 +1,14 @@
 package com.abc;
 
+import com.abc.customer.Customer;
+import com.abc.customer.SummaryGenerator;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Bank {
+    private static final SummaryGenerator SUMMARY_GENERATOR = new SummaryGenerator();
     private final List<Customer> customers;
     
     public Bank() {
@@ -16,15 +20,7 @@ public class Bank {
     }
     
     public String customerSummary() {
-        String summary = "Customer Summary";
-        for (Customer customer : customers) {
-            summary += "\n - " + customer.getName() + " (" + pluralizedCount(customer.getNumberOfAccounts(), "account") + ")";
-        }
-        return summary;
-    }
-    
-    private String pluralizedCount(int number, String word) {
-        return number + " " + (number == 1 ? word : word + "s");
+        return SUMMARY_GENERATOR.customerSummary(customers);
     }
     
     public BigDecimal totalInterestPaid() {

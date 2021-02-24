@@ -1,5 +1,6 @@
 package com.abc;
 
+import com.abc.customer.Customer;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -30,7 +31,7 @@ public class BankTest {
         john.openAccount(new Account(AccountType.CHECKING));
         underTest.addCustomer(john);
         
-        assertEquals("Customer Summary\n - John (1 account)", underTest.customerSummary());
+        assertEquals("Customer Summary" + System.lineSeparator() + " - John (1 account)", underTest.customerSummary());
     }
     
     @Test
