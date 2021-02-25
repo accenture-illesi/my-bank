@@ -1,5 +1,7 @@
 package com.abc;
 
+import com.abc.account.Account;
+import com.abc.account.AccountType;
 import com.abc.customer.Customer;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,7 +30,7 @@ public class BankTest {
     @Test
     public void customerSummary() {
         Customer john = new Customer("John");
-        john.openAccount(new Account(AccountType.CHECKING));
+        john.openAccount(Account.newAccount(AccountType.CHECKING));
         underTest.addCustomer(john);
         
         assertEquals("Customer Summary" + System.lineSeparator() + " - John (1 account)", underTest.customerSummary());
@@ -36,7 +38,7 @@ public class BankTest {
     
     @Test
     public void checkingAccount() {
-        Account checkingAccount = new Account(AccountType.CHECKING);
+        Account checkingAccount = Account.newAccount(AccountType.CHECKING);
         Customer bill = new Customer("Bill").openAccount(checkingAccount);
         underTest.addCustomer(bill);
         
@@ -47,7 +49,7 @@ public class BankTest {
     
     @Test
     public void savings_account() {
-        Account account = new Account(AccountType.SAVINGS);
+        Account account = Account.newAccount(AccountType.SAVINGS);
         underTest.addCustomer(new Customer("Bill").openAccount(account));
         
         account.deposit(1500.0);
@@ -57,7 +59,7 @@ public class BankTest {
     
     @Test
     public void maxi_savings_account() {
-        Account account = new Account(AccountType.MAXI_SAVINGS);
+        Account account = Account.newAccount(AccountType.MAXI_SAVINGS);
         underTest.addCustomer(new Customer("Bill").openAccount(account));
         
         account.deposit(3000.0);
@@ -69,10 +71,10 @@ public class BankTest {
     @Test
     public void transfer() {
         //given
-        Account from = new Account(AccountType.SAVINGS);
+        Account from = Account.newAccount(AccountType.SAVINGS);
         from.deposit(1000);
         
-        Account to = new Account(AccountType.CHECKING);
+        Account to = Account.newAccount(AccountType.CHECKING);
         to.deposit(1000);
         
         //when
@@ -86,10 +88,10 @@ public class BankTest {
     @Test
     public void transferFail() {
         //given
-        Account from = new Account(AccountType.SAVINGS);
+        Account from = Account.newAccount(AccountType.SAVINGS);
         from.deposit(50);
         
-        Account to = new Account(AccountType.CHECKING);
+        Account to = Account.newAccount(AccountType.CHECKING);
         to.deposit(50);
         
         //when
@@ -138,10 +140,10 @@ public class BankTest {
     
     private void completeAccounts() {
         underTest.addCustomer(new Customer("Arthur")
-                .openAccount(new Account(AccountType.CHECKING).deposit(1000))
-                .openAccount(new Account(AccountType.SAVINGS).deposit(100).withdraw(50)));
+                .openAccount(Account.newAccount(AccountType.CHECKING).deposit(1000))
+                .openAccount(Account.newAccount(AccountType.SAVINGS).deposit(100).withdraw(50)));
         underTest.addCustomer(new Customer("Charlie")
-                .openAccount(new Account(AccountType.MAXI_SAVINGS).deposit(1000)));
+                .openAccount(Account.newAccount(AccountType.MAXI_SAVINGS).deposit(1000)));
     }
     
     private BigDecimal actualBalance() {

@@ -1,7 +1,7 @@
 package com.abc.customer;
 
-import com.abc.Account;
-import com.abc.AccountType;
+import com.abc.account.Account;
+import com.abc.account.AccountType;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -38,8 +38,8 @@ public class StatementGeneratorTest {
     }
     
     private Customer givenCustomer() {
-        Account checkingAccount = new Account(AccountType.CHECKING);
-        Account savingsAccount = new Account(AccountType.SAVINGS);
+        Account checkingAccount = Account.newAccount(AccountType.CHECKING);
+        Account savingsAccount = Account.newAccount(AccountType.SAVINGS);
         Customer henry = new Customer("Henry").openAccount(checkingAccount).openAccount(savingsAccount);
         checkingAccount.deposit(100.0);
         savingsAccount.deposit(4000.0);

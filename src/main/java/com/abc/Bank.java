@@ -1,5 +1,6 @@
 package com.abc;
 
+import com.abc.account.Account;
 import com.abc.customer.Customer;
 import com.abc.customer.SummaryGenerator;
 

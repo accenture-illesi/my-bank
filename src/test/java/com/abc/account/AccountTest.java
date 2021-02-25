@@ -1,4 +1,4 @@
-package com.abc;
+package com.abc.account;
 
 import com.abc.transaction.MockTransaction;
 import org.junit.Before;
@@ -22,7 +22,7 @@ public class AccountTest {
     @Test
     public void checking() {
         //given
-        account = new Account(AccountType.CHECKING);
+        account = Account.newAccount(AccountType.CHECKING);
         account.deposit(3000.0);
         //when
         double actual = account.interestEarned().doubleValue();
@@ -34,7 +34,7 @@ public class AccountTest {
     @Test
     public void savings() {
         //given
-        account = new Account(AccountType.SAVINGS);
+        account = Account.newAccount(AccountType.SAVINGS);
         account.deposit(3000.0);
         //when
         double actual = account.interestEarned().doubleValue();
@@ -46,7 +46,7 @@ public class AccountTest {
     @Test
     public void maxiSavingsNoWithdrawals() {
         //given
-        account = new Account(AccountType.MAXI_SAVINGS);
+        account = Account.newAccount(AccountType.MAXI_SAVINGS);
         account.deposit(3000.0);
         //when
         double actual = account.interestEarned().doubleValue();
@@ -58,7 +58,7 @@ public class AccountTest {
     @Test
     public void maxiSavingsExpiredWithdrawals() {
         //given
-        account = new Account(AccountType.MAXI_SAVINGS);
+        account = Account.newAccount(AccountType.MAXI_SAVINGS);
         account.deposit(3000.0);
         account.getTransactions().add(new MockTransaction(-1000, LocalDateTime.now()
                 .minus(10, ChronoUnit.DAYS)
@@ -73,7 +73,7 @@ public class AccountTest {
     @Test
     public void maxiSavingsWithWithdrawals() {
         //given
-        account = new Account(AccountType.MAXI_SAVINGS);
+        account = Account.newAccount(AccountType.MAXI_SAVINGS);
         account.deposit(3000.0);
         account.withdraw(1000);
         //when
@@ -86,7 +86,7 @@ public class AccountTest {
     @Test
     public void zeroWithdraw() {
         //given
-        account = new Account(AccountType.CHECKING);
+        account = Account.newAccount(AccountType.CHECKING);
         account.deposit(1000);
         try {
             //when
@@ -101,7 +101,7 @@ public class AccountTest {
     @Test
     public void notEnoughBalance() {
         //given
-        account = new Account(AccountType.CHECKING);
+        account = Account.newAccount(AccountType.CHECKING);
         account.deposit(1000);
         try {
             //when

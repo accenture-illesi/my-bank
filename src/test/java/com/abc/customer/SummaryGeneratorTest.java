@@ -1,7 +1,7 @@
 package com.abc.customer;
 
-import com.abc.Account;
-import com.abc.AccountType;
+import com.abc.account.Account;
+import com.abc.account.AccountType;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,10 +32,10 @@ public class SummaryGeneratorTest {
     public void summary() {
         //given
         List<Customer> customers = List.of(new Customer("Bobby")
-                        .openAccount(new Account(AccountType.CHECKING).deposit(1000)),
+                        .openAccount(Account.newAccount(AccountType.CHECKING).deposit(1000)),
                 new Customer("Billy")
-                        .openAccount(new Account(AccountType.SAVINGS).deposit(2000).withdraw(500))
-                        .openAccount(new Account(AccountType.MAXI_SAVINGS).deposit(5000)));
+                        .openAccount(Account.newAccount(AccountType.SAVINGS).deposit(2000).withdraw(500))
+                        .openAccount(Account.newAccount(AccountType.MAXI_SAVINGS).deposit(5000)));
         //when
         String actual = underTest.customerSummary(customers);
         String expected = "Customer Summary" + System.lineSeparator() +

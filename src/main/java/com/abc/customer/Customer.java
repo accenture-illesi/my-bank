@@ -1,6 +1,6 @@
 package com.abc.customer;
 
-import com.abc.Account;
+import com.abc.account.Account;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
