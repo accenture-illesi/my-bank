@@ -15,12 +15,13 @@ import static org.junit.Assert.fail;
 public class BankTest {
     private static final double DOUBLE_DELTA = 1e-15;
     /**
-     * A slightly less strict delta, to compare numbers after multiple iterations of calculations.
+     * A slightly less strict delta, to compare compound interests over multiple iterations of calculations.
      *
      * @implNote {@link BigDecimal} is used for the actual calculations, but only double for the tests.
      */
     private static final double LOWER_DELTA = 1e-11;
     private Bank underTest;
+    private static final int DAYS = LocalDate.now().lengthOfYear();
     
     @Before
     public void init() {
@@ -38,34 +39,51 @@ public class BankTest {
     
     @Test
     public void checkingAccount() {
+        // given
         Account checkingAccount = Account.newAccount(AccountType.CHECKING);
         Customer bill = new Customer("Bill").openAccount(checkingAccount);
         underTest.addCustomer(bill);
-        
         checkingAccount.deposit(100.0);
         
-        assertEquals(0.1, underTest.totalInterestPaid().doubleValue(), DOUBLE_DELTA);
+        //when
+        underTest.accrueInterest();
+        
+        //then
+        double actual = underTest.totalInterestPaid().doubleValue();
+        double expected = 100 * 0.001 / DAYS;
+        assertEquals(expected, actual, DOUBLE_DELTA);
     }
     
     @Test
     public void savings_account() {
+        // given
         Account account = Account.newAccount(AccountType.SAVINGS);
         underTest.addCustomer(new Customer("Bill").openAccount(account));
-        
         account.deposit(1500.0);
         
-        assertEquals(2.0, underTest.totalInterestPaid().doubleValue(), DOUBLE_DELTA);
+        //when
+        underTest.accrueInterest();
+        
+        //then
+        double actual = underTest.totalInterestPaid().doubleValue();
+        double expected = (1000 * 0.001 + 500 * 0.002) / DAYS;
+        assertEquals(expected, actual, DOUBLE_DELTA);
     }
     
     @Test
     public void maxi_savings_account() {
+        //given
         Account account = Account.newAccount(AccountType.MAXI_SAVINGS);
         underTest.addCustomer(new Customer("Bill").openAccount(account));
-        
         account.deposit(3000.0);
         
-        double expected = 3000 * 0.05;
-        assertEquals(expected, underTest.totalInterestPaid().doubleValue(), DOUBLE_DELTA);
+        //when
+        underTest.accrueInterest();
+        
+        //then
+        double actual = underTest.totalInterestPaid().doubleValue();
+        double expected = 3000 * 0.05 / DAYS;
+        assertEquals(expected, actual, DOUBLE_DELTA);
     }
     
     @Test

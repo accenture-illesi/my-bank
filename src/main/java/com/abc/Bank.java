@@ -6,6 +6,7 @@ import com.abc.customer.SummaryGenerator;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class Bank {
@@ -46,13 +47,16 @@ public class Bank {
         }
     }
     
+    /**
+     * Applies daily interest to each account.
+     *
+     * @apiNote This method should be called from the main application at the beginning of each day, to correctly apply interests.<br/>
+     * If the interest is not calculated at the correct time, it may give different results.<br/>
+     * (e.g. if the interest rate is based on expiring transactions)
+     */
     public void accrueInterest() {
-        for (Customer customer : customers) {
-            for (Account account : customer.getAccounts()) {
-                BigDecimal compoundInterest = account.dailyInterestEarned();
-                account.deposit(compoundInterest);
-            }
-        }
+        customers.stream().map(Customer::getAccounts).flatMap(Collection::stream)
+                .forEach(Account::depositDailyInterest);
     }
     
     public List<Customer> getCustomers() {

@@ -1,5 +1,6 @@
 package com.abc.account;
 
+import com.abc.transaction.InterestTransaction;
 import com.abc.transaction.Transaction;
 
 import java.math.BigDecimal;
@@ -10,13 +11,9 @@ import java.util.List;
 public abstract class Account {
     protected static final int DAYS_IN_YEAR = LocalDate.now().lengthOfYear();
     
-    private final List<Transaction> transactions;
+    private final List<Transaction> transactions = new ArrayList<>();
     
     private BigDecimal sum;
-    
-    public Account() {
-        this.transactions = new ArrayList<>();
-    }
     
     public static Account newAccount(AccountType accountType) {
         return switch (accountType) {
@@ -27,14 +24,29 @@ public abstract class Account {
     }
     
     public Account deposit(double amount) {
-        return deposit(BigDecimal.valueOf(amount));
+        return deposit(BigDecimal.valueOf(amount), false);
     }
     
     public Account deposit(BigDecimal amount) {
+        return deposit(amount, false);
+    }
+    
+    /**
+     * Utility method, to calculate and apply daily interest to the account.
+     */
+    public void depositDailyInterest() {
+        depositInterest(dailyInterestEarned());
+    }
+    
+    private void depositInterest(BigDecimal amount) {
+        deposit(amount, true);
+    }
+    
+    private Account deposit(BigDecimal amount, boolean isInterest) {
         if (BigDecimal.ZERO.compareTo(amount) >= 0) {
             throw new IllegalArgumentException("Amount must be greater than zero");
         } else {
-            transactions.add(new Transaction(amount));
+            transactions.add(isInterest ? new InterestTransaction(amount) : new Transaction(amount));
             sum = null;
             return this;
         }
@@ -57,23 +69,29 @@ public abstract class Account {
         }
     }
     
-    //FIXME sum up daily interests
-    public abstract BigDecimal interestEarned();
+    /**
+     * Sums the total interest earned.
+     *
+     * @return sum of all interests
+     */
+    public BigDecimal interestEarned() {
+        return transactions.stream().filter(t -> t instanceof InterestTransaction)
+                .map(Transaction::getAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
     
-    public abstract BigDecimal dailyInterestEarned();
+    /**
+     * Calculates the daily interest for the account.
+     */
+    protected abstract BigDecimal dailyInterestEarned();
     
     public BigDecimal sumTransactions() {
         if (sum == null) {
-            sum = BigDecimal.ZERO;
-            for (Transaction transaction : transactions) {
-                sum = sum.add(transaction.getAmount());
-            }
+            sum = transactions.stream().map(Transaction::getAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
         }
         return sum;
     }
     
     public abstract AccountType getAccountType();
-    /*{return accountType;}*/
     
     public List<Transaction> getTransactions() {
         return transactions;
